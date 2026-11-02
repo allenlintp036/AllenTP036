@@ -1,0 +1,90 @@
+---
+import '../styles/global.css';
+import { site } from '../site';
+import { url } from '../lib/url';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = site.description } = Astro.props;
+const fullTitle = title ? `${title}｜${site.name}` : `${site.name}｜${site.tagline}`;
+const path = Astro.url.pathname;
+
+const nav = [
+  { href: url('/insurance/'), label: '就事論事談保險' },
+  { href: url('/thoughts/'), label: '我在想的事' },
+  { href: url('/watching/'), label: '最近在看' },
+  { href: url('/about/'), label: '認識我' },
+];
+const isCurrent = (href: string) => path.startsWith(href);
+---
+
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap"
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要內容</a>
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href={url('/')}>{site.name}</a>
+
+        <nav class="nav-desktop" aria-label="主選單">
+          {nav.map((item) => (
+            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          ))}
+          <a class="btn btn-accent" href={site.lineUrl} target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg>
+            LINE 聊聊
+          </a>
+        </nav>
+
+        <details class="nav-mobile">
+          <summary aria-label="開啟選單">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+          </summary>
+          <nav class="panel" aria-label="手機選單">
+            <a href={url('/')}>首頁</a>
+            {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+          </nav>
+        </details>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <span>© {new Date().getFullYear()} {site.name}・{site.tagline}</span>
+        <span>{site.disclaimer}</span>
+      </div>
+    </footer>
+
+    <div class="mobile-cta">
+      <a class="btn btn-accent" href={site.lineUrl} target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"></path></svg>
+        LINE 問我
+      </a>
+    </div>
+  </body>
+</html>

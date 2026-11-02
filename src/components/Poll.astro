@@ -1,0 +1,60 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { url } from '../lib/url';
+
+interface Props {
+  q: CollectionEntry<'questions'>;
+}
+const { q } = Astro.props;
+---
+
+<section class="poll" data-poll={q.id}>
+  <div>
+    <p class="eyebrow">今天的思考題</p>
+    <h2>{q.data.question}</h2>
+  </div>
+  <div class="poll-options">
+    {q.data.options.map((opt, i) => (
+      <button type="button" class="poll-option" aria-pressed="false" data-index={i}>
+        {opt}
+      </button>
+    ))}
+    <p class="poll-hint">選一個，就能看我的想法。</p>
+  </div>
+  <div class="poll-answer" hidden>
+    <p><strong>我的想法：</strong>{q.data.myTake}</p>
+    {q.data.readMore && (
+      <p>
+        <a href={url(`/${q.data.readMore}/`)}>想多聊一點？看這篇 →</a>
+      </p>
+    )}
+  </div>
+</section>
+
+<script>
+  // 讀者選了之後才顯示作者的想法，選擇只記在讀者自己的瀏覽器
+  document.querySelectorAll<HTMLElement>('[data-poll]').forEach((poll) => {
+    const key = `poll:${poll.dataset.poll}`;
+    const buttons = poll.querySelectorAll<HTMLButtonElement>('.poll-option');
+    const answer = poll.querySelector<HTMLElement>('.poll-answer');
+    const hint = poll.querySelector<HTMLElement>('.poll-hint');
+
+    const choose = (index: string, save: boolean) => {
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.index === index)));
+      if (answer) answer.hidden = false;
+      if (hint) hint.hidden = true;
+      if (save) {
+        try {
+          localStorage.setItem(key, index);
+        } catch {}
+      }
+    };
+
+    buttons.forEach((b) => b.addEventListener('click', () => choose(b.dataset.index ?? '0', true)));
+
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved !== null) choose(saved, false);
+    } catch {}
+  });
+</script>

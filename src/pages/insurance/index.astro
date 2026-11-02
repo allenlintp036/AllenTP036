@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostListItem from '../../components/PostListItem.astro';
+import { getPosts } from '../../lib/posts';
+
+const posts = await getPosts('insurance');
+---
+
+<Base title="就事論事談保險" description="不推銷，只講清楚：什麼情況會賠，什麼情況會有落差。">
+  <div class="container">
+    <header class="page-head">
+      <h1>就事論事談保險</h1>
+      <p>不推銷，只講清楚：什麼情況會賠，什麼情況會有落差。</p>
+    </header>
+    <div style="max-width: 800px">
+      {posts.map((post) => <PostListItem post={post} showDesc />)}
+    </div>
+  </div>
+</Base>
