@@ -42,6 +42,20 @@ const question = (await getCollection('questions')).sort((a, b) => b.data.date.g
       </div>
     )}
 
+    <a class="wealth-teaser" href={url('/wealth/')}>
+      <div style="display: grid; gap: 12px">
+        <p class="eyebrow">財富管理</p>
+        <h2>財富管理的完整架構</h2>
+        <p>就像蓋房子，要從最底層開始。點進來看看三層各自在解決什麼問題，還有你現在在哪一層。</p>
+        <span class="more-link">點進去看看 →</span>
+      </div>
+      <div class="mini-pyramid" aria-hidden="true">
+        <span>財富傳承</span>
+        <span>投資／退休管理</span>
+        <span>風險管理</span>
+      </div>
+    </a>
+
     <section class="section">
       <div class="section-head">
         <div>
