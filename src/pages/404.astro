@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+---
+
+<Base title="找不到這一頁">
+  <div class="container">
+    <header class="page-head">
+      <h1>這一頁不見了</h1>
+      <p>可能是網址打錯，或文章已經搬家。</p>
+    </header>
+    <a class="btn btn-dark" href={url('/')}>回首頁</a>
+  </div>
+</Base>

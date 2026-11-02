@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostListItem from '../../components/PostListItem.astro';
+import { getPosts } from '../../lib/posts';
+
+const posts = await getPosts('thoughts');
+---
+
+<Base title="我在想的事" description="哲學、法律、政治，還有生活裡想不通又忍不住去想的問題。">
+  <div class="container">
+    <header class="page-head">
+      <h1>我在想的事</h1>
+      <p>哲學、法律、政治，還有生活裡想不通又忍不住去想的問題。</p>
+    </header>
+    <div style="max-width: 800px">
+      {posts.map((post) => <PostListItem post={post} showDesc />)}
+    </div>
+  </div>
+</Base>

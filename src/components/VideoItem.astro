@@ -1,0 +1,26 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  video: CollectionEntry<'videos'>;
+}
+const { video } = Astro.props;
+
+// 從 YouTube 連結抓出影片 ID，用來顯示縮圖
+function youtubeId(link: string): string | null {
+  const m = link.match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+const id = youtubeId(video.data.url);
+---
+
+<a class="video" href={video.data.url} target="_blank" rel="noopener">
+  <span class="thumb">
+    {id && <img src={`https://i.ytimg.com/vi/${id}/mqdefault.jpg`} alt="" loading="lazy" width="320" height="180" />}
+  </span>
+  <span>
+    <span class="title">{video.data.title}</span>
+    <br />
+    <span class="note">我的一句話：{video.data.note}</span>
+  </span>
+</a>

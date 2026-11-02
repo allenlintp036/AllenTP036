@@ -1,0 +1,80 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import PostListItem from '../components/PostListItem.astro';
+import VideoItem from '../components/VideoItem.astro';
+import Poll from '../components/Poll.astro';
+import AboutBand from '../components/AboutBand.astro';
+import { site } from '../site';
+import { url } from '../lib/url';
+import { getPosts } from '../lib/posts';
+
+const insurance = (await getPosts('insurance')).slice(0, 3);
+const thoughts = (await getPosts('thoughts')).slice(0, 3);
+const videos = (await getCollection('videos'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+const question = (await getCollection('questions')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime())[0];
+---
+
+<Base>
+  <div class="container">
+    <section class="hero">
+      <div class="hero-photo">
+        <!-- 把照片放到 public/me.jpg 後，換成：<img src={url('/me.jpg')} alt={site.name} /> -->
+        [你的照片：自然、生活感的半身照]
+      </div>
+      <div class="hero-text">
+        <p class="eyebrow">{site.role}</p>
+        <h1>無話不談，<br />無思不想</h1>
+        <p class="sub">{site.subTagline}</p>
+        <p class="intro">{site.intro}</p>
+        <div class="hero-actions">
+          <a class="btn btn-dark" href={url('/about/')}>先認識我</a>
+          {question && <a class="btn btn-outline" href="#question">看今天的思考題</a>}
+        </div>
+      </div>
+    </section>
+
+    {question && (
+      <div id="question" style="scroll-margin-top: 100px">
+        <Poll q={question} />
+      </div>
+    )}
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>就事論事談保險</h2>
+          <p>不推銷，只講清楚：什麼情況會賠，什麼情況會有落差。</p>
+        </div>
+        <a class="more-link" href={url('/insurance/')}>看全部 →</a>
+      </div>
+      <div class="card-row">
+        {insurance.map((post) => <PostCard post={post} />)}
+      </div>
+      <p class="swipe-hint">← 左右滑動看更多</p>
+    </section>
+
+    <div class="two-col">
+      <section class="section">
+        <div class="section-head">
+          <h2>我在想的事</h2>
+          <a class="more-link" href={url('/thoughts/')}>看全部 →</a>
+        </div>
+        {thoughts.map((post) => <PostListItem post={post} />)}
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>最近在看</h2>
+          <a class="more-link" href={url('/watching/')}>看全部 →</a>
+        </div>
+        {videos.map((v) => <VideoItem video={v} />)}
+      </section>
+    </div>
+
+    <AboutBand />
+  </div>
+</Base>

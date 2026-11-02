@@ -1,0 +1,18 @@
+---
+import type { Post } from '../lib/posts';
+import { postUrl } from '../lib/posts';
+import { url } from '../lib/url';
+
+interface Props {
+  post: Post;
+  showDesc?: boolean;
+}
+const { post, showDesc = false } = Astro.props;
+const warm = post.collection === 'thoughts';
+---
+
+<a class="list-item" href={url(postUrl(post))}>
+  <span class:list={['tag', { 'tag-warm': warm }]}>{post.data.tag}</span>
+  <span class="title">{post.data.title}</span>
+  {showDesc && <span class="desc">{post.data.description}</span>}
+</a>
