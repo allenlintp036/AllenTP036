@@ -22,8 +22,7 @@ const question = (await getCollection('questions')).sort((a, b) => b.data.date.g
   <div class="container">
     <section class="hero">
       <div class="hero-photo">
-        <!-- 把照片放到 public/me.jpg 後，換成：<img src={url('/me.jpg')} alt={site.name} /> -->
-        [你的照片：自然、生活感的半身照]
+        <img src={url('/me.jpg')} alt={`${site.name}的照片`} width="1108" height="1477" fetchpriority="high" />
       </div>
       <div class="hero-text">
         <p class="eyebrow">{site.role}</p>

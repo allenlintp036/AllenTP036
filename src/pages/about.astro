@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { site } from '../site';
+import { url } from '../lib/url';
 ---
 
 <Base title="認識我" description={`${site.name}：${site.role}。${site.tagline}，${site.subTagline}。`}>
@@ -12,7 +13,9 @@ import { site } from '../site';
 
     <div class="article-layout">
       <article class="prose">
-        <div class="hero-photo" style="margin-bottom: 32px">[你的照片]</div>
+        <div class="hero-photo" style="margin-bottom: 32px">
+          <img src={url('/me.jpg')} alt={`${site.name}的照片`} width="1108" height="1477" loading="lazy" />
+        </div>
 
         <h2>我是誰</h2>
         <p>[用兩三句話介紹自己：在哪裡長大、做保險幾年、為什麼走進這一行。]</p>
