@@ -1,0 +1,207 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../site';
+import { layers, activeIncome, passiveIncome } from '../data/wealth';
+
+// 金字塔由上往下畫，但閱讀順序是由下往上
+const drawOrder = [...layers].reverse();
+const shape: Record<string, { top: number; height: number; clip: string }> = {
+  legacy: { top: 0, height: 42, clip: 'polygon(50% 0, 50% 0, 71% 100%, 29% 100%)' },
+  invest: { top: 43.5, height: 27.5, clip: 'polygon(28.25% 0, 71.75% 0, 85.5% 100%, 14.5% 100%)' },
+  risk: { top: 72.5, height: 27.5, clip: 'polygon(13.75% 0, 86.25% 0, 100% 100%, 0 100%)' },
+};
+const first = layers[0];
+---
+
+<Base title="財富管理的完整架構" description="財富管理就像蓋房子，要從最底層開始：風險管理、投資／退休管理、財富傳承。點點看你現在在哪一層。">
+  <div class="container">
+    <header class="page-head">
+      <p class="eyebrow">財富管理</p>
+      <h1 style="margin-top: 8px">財富管理的完整架構</h1>
+      <p>財富管理就像蓋房子，要從最底層開始。點點看每一層，看看你現在在哪裡。</p>
+    </header>
+
+    <section class="wealth" data-wealth id="pyramid">
+      <div class="stage-steps" role="group" aria-label="人生階段">
+        {layers.map((l, i) => (
+          <>
+            {i > 0 && <span class="stage-arrow" aria-hidden="true">→</span>}
+            <button type="button" class="stage-step" data-select={l.id} aria-pressed={l.id === first.id ? 'true' : 'false'}>
+              <span class="num">{i + 1}</span>{l.stage}
+            </button>
+          </>
+        ))}
+      </div>
+
+      <div class="wealth-grid">
+        <div class="pyramid-wrap">
+          <div class="pyramid" role="group" aria-label="財富管理金字塔，由下往上">
+            {drawOrder.map((l) => (
+              <button
+                type="button"
+                class="pyr-layer"
+                data-select={l.id}
+                data-layer={l.id}
+                aria-pressed={l.id === first.id ? 'true' : 'false'}
+                style={`top: ${shape[l.id].top}%; height: ${shape[l.id].height}%; clip-path: ${shape[l.id].clip};`}
+              >
+                <span class="pyr-title">{l.title}</span>
+                <span class="pyr-stage">{l.stage}</span>
+              </button>
+            ))}
+          </div>
+          <p class="pyramid-hint">點金字塔的任何一層</p>
+        </div>
+
+        <div class="wealth-panels" aria-live="polite">
+          {layers.map((l, i) => (
+            <article class="wealth-panel" data-panel={l.id} hidden={l.id !== first.id}>
+              <p class="panel-stage">第 {i + 1} 層・{l.stage}</p>
+              <h2>{l.title}</h2>
+              <p class="panel-goal">{l.goal}</p>
+              <div class="panel-problem">
+                <span>要解決的問題</span>
+                <strong>{l.problem}</strong>
+              </div>
+              <div class="panel-tools">
+                <span class="label">會用到的工具</span>
+                <span class="tools">{l.tools.join('、')}</span>
+              </div>
+
+              <p class="label" style="margin: 20px 0 10px">這一層包含（點點看）</p>
+              <div class="chips">
+                {l.items.map((item) => (
+                  <button type="button" class="chip" data-note={item.note} aria-pressed="false">
+                    {item.name}
+                  </button>
+                ))}
+              </div>
+              <p class="chip-note" data-chip-note>選一個項目，看它在說什麼。</p>
+
+              <div class="panel-nav">
+                {i > 0 && (
+                  <button type="button" class="btn btn-outline" data-select={layers[i - 1].id}>
+                    ← {layers[i - 1].title}
+                  </button>
+                )}
+                {i < layers.length - 1 ? (
+                  <button type="button" class="btn btn-dark" data-select={layers[i + 1].id}>
+                    往上：{layers[i + 1].title} →
+                  </button>
+                ) : (
+                  <a class="btn btn-accent" href={site.lineUrl} target="_blank" rel="noopener">
+                    想聊聊你在哪一層？LINE 我
+                  </a>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="income" data-income data-state="working">
+      <div class="section-head" style="margin-bottom: 16px">
+        <div>
+          <h2>錢從哪裡來？</h2>
+          <p>收入分兩種：要工作才有的「主動所得」，和不工作也有的「被動所得」。</p>
+        </div>
+      </div>
+
+      <div class="income-toggle" role="group" aria-label="切換情境">
+        <button type="button" class="toggle" data-income-state="working" aria-pressed="true">現在還在工作</button>
+        <button type="button" class="toggle" data-income-state="retired" aria-pressed="false">哪天不工作了</button>
+      </div>
+
+      <div class="income-grid">
+        <div class="income-card income-active">
+          <div class="income-head">
+            <h3>主動所得</h3>
+            <span class="status-on">進帳中</span>
+            <span class="status-off">停了</span>
+          </div>
+          <ul>{activeIncome.map((x) => <li>{x}</li>)}</ul>
+          <p class="pays">支付 <strong>基本生活支出</strong></p>
+        </div>
+        <div class="income-card income-passive">
+          <div class="income-head">
+            <h3>被動所得</h3>
+            <span class="status-on">進帳中</span>
+            <span class="status-off status-keep">還在進帳</span>
+          </div>
+          <ul>{passiveIncome.map((x) => <li>{x}</li>)}</ul>
+          <p class="pays">支付 <strong>品質生活支出</strong></p>
+        </div>
+      </div>
+
+      <div class="income-message">
+        <p class="msg-working">工作的時候，主動所得撐起基本生活，被動所得讓生活更有品質。</p>
+        <p class="msg-retired">
+          不工作之後，薪水停了，生活就只能靠被動所得。這正是金字塔中間那一層要做的事。
+          <button type="button" class="link-btn" data-select="invest" data-scroll>看「投資／退休管理」→</button>
+        </p>
+      </div>
+    </section>
+
+    <section class="about-band">
+      <div style="display: grid; gap: 14px">
+        <p>每個人的起點都不一樣</p>
+        <p class="traits">你現在在哪一層？</p>
+        <p>不用急著買什麼。先聊聊你現在的狀況，我們一起看看哪一層最需要先補。</p>
+      </div>
+      <div class="actions">
+        <a class="btn btn-accent" href={site.lineUrl} target="_blank" rel="noopener">加 LINE 聊聊</a>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-wealth]');
+  if (root) {
+    const select = (id: string) => {
+      document.querySelectorAll<HTMLElement>('.pyr-layer, .stage-step').forEach((el) => {
+        el.setAttribute('aria-pressed', String(el.dataset.select === id));
+      });
+      root.querySelectorAll<HTMLElement>('[data-panel]').forEach((p) => {
+        p.hidden = p.dataset.panel !== id;
+      });
+    };
+
+    document.querySelectorAll<HTMLElement>('[data-select]').forEach((el) => {
+      el.addEventListener('click', () => {
+        select(el.dataset.select ?? 'risk');
+        if (el.hasAttribute('data-scroll') || el.closest('.panel-nav')) {
+          if (window.innerWidth < 960 || el.hasAttribute('data-scroll')) {
+            root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+
+    root.querySelectorAll<HTMLElement>('[data-panel]').forEach((panel) => {
+      const note = panel.querySelector<HTMLElement>('[data-chip-note]');
+      const chips = panel.querySelectorAll<HTMLButtonElement>('.chip');
+      chips.forEach((chip) => {
+        chip.addEventListener('click', () => {
+          chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+          if (note) {
+            note.textContent = `${chip.textContent?.trim()}：${chip.dataset.note ?? ''}`;
+            note.classList.add('has-note');
+          }
+        });
+      });
+    });
+  }
+
+  const income = document.querySelector<HTMLElement>('[data-income]');
+  if (income) {
+    const toggles = income.querySelectorAll<HTMLButtonElement>('[data-income-state]');
+    toggles.forEach((t) =>
+      t.addEventListener('click', () => {
+        income.dataset.state = t.dataset.incomeState;
+        toggles.forEach((x) => x.setAttribute('aria-pressed', String(x === t)));
+      }),
+    );
+  }
+</script>
