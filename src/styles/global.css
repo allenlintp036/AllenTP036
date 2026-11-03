@@ -601,6 +601,12 @@ body {
 .prose blockquote p:last-child {
   margin: 0;
 }
+.prose .signed {
+  text-align: right;
+  color: var(--muted);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+}
 .author-card {
   border-radius: 18px;
   background: var(--soft);
