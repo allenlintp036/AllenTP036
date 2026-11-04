@@ -42,12 +42,12 @@ const question = (await getCollection('questions')).sort((a, b) => b.data.date.g
       </div>
     )}
 
-    <a class="wealth-teaser" href={url('/wealth/')}>
+    <a class="wealth-teaser" href={url('/wealth/quiz/')}>
       <div style="display: grid; gap: 12px">
-        <p class="eyebrow">財富管理</p>
-        <h2>財富管理的完整架構</h2>
-        <p>就像蓋房子，要從最底層開始。點進來看看三層各自在解決什麼問題，還有你現在在哪一層。</p>
-        <span class="more-link">點進去看看 →</span>
+        <p class="eyebrow">財富管理・1 分鐘小測驗</p>
+        <h2>你在財富金字塔的<span class="keep">哪一層？</span></h2>
+        <p>財富管理就像蓋房子，要從最底層開始。回答 6 個問題，看看你的地基穩不穩、下一步該先補什麼。</p>
+        <span class="more-link">開始測驗 →</span>
       </div>
       <div class="mini-pyramid" aria-hidden="true">
         <span>財富傳承</span>
