@@ -9,14 +9,17 @@ import Poll from '../components/Poll.astro';
 import AboutBand from '../components/AboutBand.astro';
 import { site } from '../site';
 import { url } from '../lib/url';
-import { getPosts } from '../lib/posts';
+import { getPosts, getUpcoming, getVideos } from '../lib/posts';
+import Upcoming from '../components/Upcoming.astro';
 
 const insurance = (await getPosts('insurance')).slice(0, 3);
 const thoughts = (await getPosts('thoughts')).slice(0, 3);
-const videos = (await getCollection('videos'))
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3);
-const question = (await getCollection('questions')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime())[0];
+const upcomingInsurance = insurance.length ? [] : (await getUpcoming('insurance')).slice(0, 3);
+const upcomingThoughts = thoughts.length ? [] : (await getUpcoming('thoughts')).slice(0, 3);
+const videos = (await getVideos()).slice(0, 3);
+const question = (await getCollection('questions'))
+  .filter((q) => !q.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())[0];
 ---
 
 <Base>
@@ -61,10 +64,16 @@ const question = (await getCollection('questions')).sort((a, b) => b.data.date.g
         </div>
         <a class="more-link" href={url('/insurance/')}>看全部 →</a>
       </div>
-      <div class="card-row">
-        {insurance.map((post) => <PostCard post={post} />)}
-      </div>
-      <p class="swipe-hint">← 左右滑動看更多</p>
+      {insurance.length > 0 ? (
+        <>
+          <div class="card-row">
+            {insurance.map((post) => <PostCard post={post} />)}
+          </div>
+          {insurance.length > 1 && <p class="swipe-hint">← 左右滑動看更多</p>}
+        </>
+      ) : (
+        <Upcoming posts={upcomingInsurance} />
+      )}
     </section>
 
     <div class="two-col">
@@ -73,7 +82,7 @@ const question = (await getCollection('questions')).sort((a, b) => b.data.date.g
           <h2>我在想的事</h2>
           <a class="more-link" href={url('/thoughts/')}>看全部 →</a>
         </div>
-        {thoughts.map((post) => <PostListItem post={post} />)}
+        {thoughts.length > 0 ? thoughts.map((post) => <PostListItem post={post} />) : <Upcoming posts={upcomingThoughts} />}
       </section>
 
       <section class="section">
@@ -81,7 +90,11 @@ const question = (await getCollection('questions')).sort((a, b) => b.data.date.g
           <h2>最近在看</h2>
           <a class="more-link" href={url('/watching/')}>看全部 →</a>
         </div>
-        {videos.map((v) => <VideoItem video={v} />)}
+        {videos.length > 0 ? (
+          videos.map((v) => <VideoItem video={v} />)
+        ) : (
+          <p class="empty-note">最近看的好影片整理中，很快放上來。</p>
+        )}
       </section>
     </div>
 

@@ -2,9 +2,13 @@
   {
     "id": "genetic-data",
     "question": "如果讓保險公司看你的基因資料，保費會更「公平」。你願意嗎？",
-    "options": ["願意，公平就是依風險定價", "不願意，保險本來就是互助"],
+    "options": [
+      "願意，公平就是依風險定價",
+      "不願意，保險本來就是互助"
+    ],
     "myTake": "[寫下你的看法。例如：兩邊都有道理，但我比較在意的是……]",
     "readMore": "thoughts/insurance-is-philosophy",
-    "date": "2026-11-02"
+    "date": "2026-11-02",
+    "draft": true
   }
 ]

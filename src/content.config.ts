@@ -31,6 +31,7 @@ const videos = defineCollection({
     channel: z.string().default(''),
     note: z.string(),
     date: z.coerce.date(),
+    draft: z.boolean().default(false),
   }),
 });
 
@@ -43,6 +44,7 @@ const questions = defineCollection({
     // 想讓讀者看完選擇後繼續讀的文章，例如 thoughts/insurance-is-philosophy
     readMore: z.string().optional(),
     date: z.coerce.date(),
+    draft: z.boolean().default(false),
   }),
 });
 

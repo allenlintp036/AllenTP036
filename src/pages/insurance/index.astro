@@ -1,9 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PostListItem from '../../components/PostListItem.astro';
-import { getPosts } from '../../lib/posts';
+import { getPosts, getUpcoming } from '../../lib/posts';
+import Upcoming from '../../components/Upcoming.astro';
 
 const posts = await getPosts('insurance');
+const upcoming = await getUpcoming('insurance');
 ---
 
 <Base title="就事論事談保險" description="不推銷，只講清楚：什麼情況會賠，什麼情況會有落差。">
@@ -14,6 +16,7 @@ const posts = await getPosts('insurance');
     </header>
     <div style="max-width: 800px">
       {posts.map((post) => <PostListItem post={post} showDesc />)}
+      {upcoming.length > 0 && <Upcoming posts={upcoming} />}
     </div>
   </div>
 </Base>

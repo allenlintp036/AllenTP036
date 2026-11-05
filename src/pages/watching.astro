@@ -1,9 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import VideoItem from '../components/VideoItem.astro';
+import { getVideos } from '../lib/posts';
 
-const videos = (await getCollection('videos')).sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const videos = await getVideos();
 ---
 
 <Base title="最近在看" description="我最近在 YouTube 看到、覺得值得花時間的影片，附上我的一句話。">
@@ -13,7 +13,11 @@ const videos = (await getCollection('videos')).sort((a, b) => b.data.date.getTim
       <p>我大部分的新知識都來自 YouTube。這裡放我覺得值得花時間的影片，附上我的一句話。</p>
     </header>
     <div style="max-width: 800px">
-      {videos.map((v) => <VideoItem video={v} />)}
+      {videos.length > 0 ? (
+        videos.map((v) => <VideoItem video={v} />)
+      ) : (
+        <p class="empty-note">最近看的好影片整理中，很快放上來。</p>
+      )}
     </div>
   </div>
 </Base>
