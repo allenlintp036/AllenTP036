@@ -1637,3 +1637,68 @@ body {
 .keep {
   display: inline-block;
 }
+
+/* 文章還沒寫完時的「寫作中」區塊 */
+.upcoming {
+  display: grid;
+  gap: 14px;
+  padding: 22px 20px;
+  border-radius: 18px;
+  border: 1.5px dashed var(--line);
+  background: var(--surface);
+}
+.upcoming-label {
+  justify-self: start;
+  margin: 0;
+  padding: 2px 12px;
+  border-radius: 999px;
+  background: var(--soft);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+.upcoming ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+.upcoming li {
+  display: grid;
+  gap: 4px;
+}
+.upcoming li .title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.upcoming-cta {
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 15px;
+  color: var(--muted);
+}
+.upcoming-cta a {
+  font-weight: 500;
+}
+.empty-note {
+  margin: 0;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: var(--soft);
+  color: var(--ink-2);
+  font-size: 15px;
+}
+@media (min-width: 960px) {
+  .upcoming {
+    padding: 28px 32px;
+  }
+  .upcoming li .title {
+    font-size: 19px;
+  }
+}

@@ -1,9 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PostListItem from '../../components/PostListItem.astro';
-import { getPosts } from '../../lib/posts';
+import { getPosts, getUpcoming } from '../../lib/posts';
+import Upcoming from '../../components/Upcoming.astro';
 
 const posts = await getPosts('thoughts');
+const upcoming = await getUpcoming('thoughts');
 ---
 
 <Base title="我在想的事" description="哲學、法律、政治，還有生活裡想不通又忍不住去想的問題。">
@@ -14,6 +16,7 @@ const posts = await getPosts('thoughts');
     </header>
     <div style="max-width: 800px">
       {posts.map((post) => <PostListItem post={post} showDesc />)}
+      {upcoming.length > 0 && <Upcoming posts={upcoming} />}
     </div>
   </div>
 </Base>

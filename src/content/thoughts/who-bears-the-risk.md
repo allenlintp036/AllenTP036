@@ -4,6 +4,7 @@ description: 用保險人的角度看政治新聞。
 date: 2026-10-25
 tag: 政治
 readingMinutes: 5
+draft: true
 ---
 
 > 這是範例文章的骨架。方括號裡是要你寫的內容，寫完把方括號刪掉就好。

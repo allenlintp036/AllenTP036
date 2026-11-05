@@ -4,6 +4,7 @@ description: 朋友買車前問我的問題。電動車的車險跟油車差在�
 date: 2026-11-01
 tag: 朋友問過我
 readingMinutes: 6
+draft: true
 ---
 
 > 這是範例文章的骨架。方括號裡是要你寫的內容，寫完把方括號刪掉就好。

@@ -5,6 +5,7 @@ date: 2026-11-02
 tag: 哲學
 readingMinutes: 6
 related: [what-you-dont-need]
+draft: true
 ---
 
 > 這是範例文章的骨架。方括號裡是要你寫的內容，寫完把方括號刪掉就好。

@@ -5,7 +5,8 @@
     "url": "https://www.youtube.com/",
     "channel": "[頻道名稱]",
     "note": "[為什麼推薦這支影片，一兩句就好]",
-    "date": "2026-11-02"
+    "date": "2026-11-02",
+    "draft": true
   },
   {
     "id": "video-2",
@@ -13,7 +14,8 @@
     "url": "https://www.youtube.com/",
     "channel": "[頻道名稱]",
     "note": "[為什麼推薦這支影片，一兩句就好]",
-    "date": "2026-11-01"
+    "date": "2026-11-01",
+    "draft": true
   },
   {
     "id": "video-3",
@@ -21,6 +23,7 @@
     "url": "https://www.youtube.com/",
     "channel": "[頻道名稱]",
     "note": "[為什麼推薦這支影片，一兩句就好]",
-    "date": "2026-10-31"
+    "date": "2026-10-31",
+    "draft": true
   }
 ]

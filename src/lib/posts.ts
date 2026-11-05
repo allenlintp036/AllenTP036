@@ -15,6 +15,20 @@ export async function getPosts(section: Section): Promise<Post[]> {
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 }
 
+// 還沒寫完（draft: true）的文章，只拿來顯示「寫作中」的標題
+export async function getUpcoming(section: Section): Promise<Post[]> {
+  const items = (await getCollection(section)) as Post[];
+  return items
+    .filter((p) => p.data.draft)
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+}
+
+export async function getVideos() {
+  return (await getCollection('videos'))
+    .filter((v) => !v.data.draft)
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+}
+
 export function postUrl(post: Post): string {
   return `/${post.collection}/${post.id}/`;
 }
