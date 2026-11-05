@@ -8,15 +8,15 @@ const posts = await getPosts('thoughts');
 const upcoming = await getUpcoming('thoughts');
 ---
 
-<Base title="我在想的事" description="哲學、法律、政治，還有生活裡想不通又忍不住去想的問題。">
+<Base title="時事觀察評論" description="新聞、熱門話題、身邊發生的事，我看完之後的想法。">
   <div class="container">
     <header class="page-head">
-      <h1>我在想的事</h1>
-      <p>哲學、法律、政治，還有生活裡想不通又忍不住去想的問題。</p>
+      <h1>時事觀察評論</h1>
+      <p>新聞、熱門話題、身邊發生的事，我看完之後的想法。</p>
     </header>
     <div style="max-width: 800px">
       {posts.map((post) => <PostListItem post={post} showDesc />)}
-      {upcoming.length > 0 && <Upcoming posts={upcoming} />}
+      {posts.length === 0 && <Upcoming posts={upcoming} section="thoughts" />}
     </div>
   </div>
 </Base>

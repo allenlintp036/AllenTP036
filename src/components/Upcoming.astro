@@ -1,18 +1,26 @@
 ---
-// 文章還沒寫完時，先放「寫作中」的標題，讓讀者告訴我想先看哪一篇
-import type { Post } from '../lib/posts';
+// 文章還沒寫完時，先放「寫作中」的標題，讓讀者告訴我想先看哪一篇。
+// 連草稿都沒有時，改成邀請讀者丟題目給我。
+import type { Post, Section } from '../lib/posts';
 import { site } from '../site';
 
 interface Props {
   posts: Post[];
+  section: Section;
 }
-const { posts } = Astro.props;
-const warm = posts[0]?.collection === 'thoughts';
+const { posts, section } = Astro.props;
+const warm = section === 'thoughts';
+const hasTitles = posts.length > 0;
+
+const emptyAsk: Record<Section, string> = {
+  insurance: '有想問的保險問題？',
+  thoughts: '最近有什麼新聞或話題，你想聽聽我怎麼看？',
+};
 ---
 
 <div class="upcoming">
-  <p class="upcoming-label">寫作中</p>
-  {posts.length > 0 && (
+  <p class="upcoming-label">{hasTitles ? '寫作中' : '第一篇準備中'}</p>
+  {hasTitles && (
     <ul>
       {posts.map((p) => (
         <li>
@@ -23,6 +31,6 @@ const warm = posts[0]?.collection === 'thoughts';
     </ul>
   )}
   <p class="upcoming-cta">
-    想先看哪一篇，或有想問的問題？<a href={site.lineUrl} target="_blank" rel="noopener">LINE 跟我說</a>，我就先寫那篇。
+    {hasTitles ? '想先看哪一篇，或有想問的問題？' : emptyAsk[section]}<a href={site.lineUrl} target="_blank" rel="noopener">LINE 跟我說</a>，{hasTitles ? '我就先寫那篇。' : '我就先寫那一則。'}
   </p>
 </div>

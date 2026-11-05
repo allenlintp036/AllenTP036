@@ -41,7 +41,7 @@ const questions = defineCollection({
     question: z.string(),
     options: z.array(z.string()).min(2).max(4),
     myTake: z.string(),
-    // 想讓讀者看完選擇後繼續讀的文章，例如 thoughts/insurance-is-philosophy
+    // 想讓讀者看完選擇後繼續讀的文章，例如 insurance/kids-liability
     readMore: z.string().optional(),
     date: z.coerce.date(),
     draft: z.boolean().default(false),
