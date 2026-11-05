@@ -1,0 +1,222 @@
+---
+import Base from '../../layouts/Base.astro';
+import { site } from '../../site';
+import { url } from '../../lib/url';
+import { layers } from '../../data/wealth';
+import { questions, results, thresholds, statusLabel } from '../../data/quiz';
+
+const layerTitle: Record<string, string> = Object.fromEntries(layers.map((l) => [l.id, l.title]));
+// 金字塔由上往下畫
+const drawOrder = [...layers].reverse();
+const config = JSON.stringify({
+  layers: questions.map((q) => q.layer),
+  thresholds,
+  statusLabel,
+});
+---
+
+<Base title="你在財富金字塔的哪一層？" description="回答 6 個問題，1 分鐘看看你的財富金字塔地基穩不穩、下一步該先補什麼。">
+  <div class="container">
+    <header class="page-head">
+      <p class="eyebrow">財富管理・1 分鐘小測驗</p>
+      <h1 style="margin-top: 8px">你在財富金字塔的<span class="keep">哪一層？</span></h1>
+      <p>回答 {questions.length} 個問題，看看你的地基穩不穩、下一步該先補什麼。</p>
+    </header>
+
+    <section class="quiz" data-quiz data-state="asking" data-config={config}>
+      <aside class="quiz-side">
+        <div class="quiz-pyramid">
+          {drawOrder.map((l) => (
+            <div class="qp-layer" data-qp={l.id}>
+              <span class="qp-title">{l.title}</span>
+              <span class="qp-status" data-qp-status></span>
+            </div>
+          ))}
+        </div>
+        <p class="quiz-side-note">每一題都對應金字塔的一層，由下往上看。</p>
+      </aside>
+
+      <div class="quiz-main">
+        <noscript>
+          <p class="quiz-card">這個測驗需要開啟 JavaScript。也可以直接看<a href={url('/wealth/')}>財富管理的完整架構</a>。</p>
+        </noscript>
+
+        {questions.map((q, i) => (
+          <div class="quiz-card" data-step={i} hidden={i !== 0}>
+            <div class="quiz-progress">
+              <span>第 {i + 1} / {questions.length} 題・{layerTitle[q.layer]}</span>
+              <div class="quiz-bar"><span style={`width: ${((i + 1) / questions.length) * 100}%`}></span></div>
+            </div>
+            <h2 class="quiz-q" tabindex="-1">{q.text}</h2>
+            <div class="quiz-options" role="group" aria-label={q.text}>
+              {q.options.map((o) => (
+                <button type="button" class="quiz-option" data-points={o.points} aria-pressed="false">
+                  {o.label}
+                </button>
+              ))}
+            </div>
+            {i > 0 && (
+              <button type="button" class="link-btn quiz-back" data-back>
+                ← 上一題
+              </button>
+            )}
+          </div>
+        ))}
+
+        {Object.entries(results).map(([id, r]) => (
+          <div class="quiz-result" data-result={id} hidden>
+            <p class="panel-stage">你的下一步：{layerTitle[r.layer]}</p>
+            <h2 tabindex="-1">{r.title}</h2>
+            <p class="result-body">{r.body}</p>
+            <div class="result-note">
+              <span class="label">{site.name}想對你說</span>
+              <p>{r.note}</p>
+            </div>
+            <div class="result-actions">
+              <a class="btn btn-accent" href={site.lineUrl} target="_blank" rel="noopener" data-line-cta data-code={r.code}>
+                加 LINE 聊聊這個結果
+              </a>
+              <button class="btn btn-outline" type="button" data-share>分享給朋友測測看</button>
+            </div>
+            <p class="result-hint" data-hint>
+              按下 LINE 按鈕會幫你複製暗號「{r.code}」。加好友後貼上傳給我，我就知道你是從這裡來的。
+            </p>
+            <div class="result-links">
+              <a href={url(`/wealth/#${r.layer}`)}>看「{layerTitle[r.layer]}」這層在做什麼 →</a>
+              <button type="button" class="link-btn" data-restart>重新測一次</button>
+            </div>
+          </div>
+        ))}
+
+        <p class="quiz-disclaimer">這個測驗只是幫你快速看方向，不代表完整的財務分析。</p>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  type Layer = 'risk' | 'invest' | 'legacy';
+  type Status = 'solid' | 'gap' | 'weak';
+  interface Config {
+    layers: Layer[];
+    thresholds: Record<Layer, { solid: number; gap: number }>;
+    statusLabel: Record<Status, string>;
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-quiz]');
+  if (root) {
+    const config: Config = JSON.parse(root.dataset.config ?? '{}');
+    const steps = [...root.querySelectorAll<HTMLElement>('[data-step]')];
+    const resultsEls = [...root.querySelectorAll<HTMLElement>('[data-result]')];
+    const pyramidLayers = [...root.querySelectorAll<HTMLElement>('[data-qp]')];
+    const answers: number[] = [];
+    let current = 0;
+
+    const keepInView = () => {
+      if (root.getBoundingClientRect().top < 0) {
+        root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
+    const highlight = (layer: Layer | null) => {
+      pyramidLayers.forEach((el) => el.classList.toggle('is-current', el.dataset.qp === layer));
+    };
+
+    const show = (i: number) => {
+      current = i;
+      root.dataset.state = 'asking';
+      resultsEls.forEach((r) => (r.hidden = true));
+      steps.forEach((s, n) => (s.hidden = n !== i));
+      pyramidLayers.forEach((el) => {
+        delete el.dataset.status;
+        const status = el.querySelector<HTMLElement>('[data-qp-status]');
+        if (status) status.textContent = '';
+      });
+      highlight(config.layers[i]);
+      steps[i].querySelectorAll<HTMLButtonElement>('.quiz-option').forEach((o) => {
+        o.setAttribute('aria-pressed', String(answers[i] !== undefined && Number(o.dataset.points) === answers[i]));
+      });
+      steps[i].querySelector<HTMLElement>('.quiz-q')?.focus({ preventScroll: true });
+      keepInView();
+    };
+
+    const finish = () => {
+      const scores: Record<Layer, number> = { risk: 0, invest: 0, legacy: 0 };
+      answers.forEach((p, i) => (scores[config.layers[i]] += p));
+
+      const statusOf = (layer: Layer): Status => {
+        const t = config.thresholds[layer];
+        return scores[layer] >= t.solid ? 'solid' : scores[layer] >= t.gap ? 'gap' : 'weak';
+      };
+      const order: Layer[] = ['risk', 'invest', 'legacy'];
+      const next = order.find((l) => statusOf(l) !== 'solid');
+      const resultId = next ?? 'complete';
+
+      pyramidLayers.forEach((el) => {
+        const s = statusOf(el.dataset.qp as Layer);
+        el.dataset.status = s;
+        const status = el.querySelector<HTMLElement>('[data-qp-status]');
+        if (status) status.textContent = config.statusLabel[s];
+      });
+      highlight(next ?? 'legacy');
+
+      root.dataset.state = 'done';
+      steps.forEach((s) => (s.hidden = true));
+      resultsEls.forEach((r) => (r.hidden = r.dataset.result !== resultId));
+      root.querySelector<HTMLElement>(`[data-result="${resultId}"] h2`)?.focus({ preventScroll: true });
+      root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    steps.forEach((step, i) => {
+      step.querySelectorAll<HTMLButtonElement>('.quiz-option').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          answers[i] = Number(opt.dataset.points);
+          step.querySelectorAll('.quiz-option').forEach((o) => o.setAttribute('aria-pressed', String(o === opt)));
+          // 稍微停一下，讓人看到自己選了什麼
+          window.setTimeout(() => (i < steps.length - 1 ? show(i + 1) : finish()), 220);
+        });
+      });
+      step.querySelector('[data-back]')?.addEventListener('click', () => show(i - 1));
+    });
+
+    root.querySelectorAll('[data-restart]').forEach((b) =>
+      b.addEventListener('click', () => {
+        answers.length = 0;
+        show(0);
+      }),
+    );
+
+    root.querySelectorAll<HTMLAnchorElement>('[data-line-cta]').forEach((a) =>
+      a.addEventListener('click', () => {
+        const code = a.dataset.code ?? '';
+        navigator.clipboard?.writeText(code).then(
+          () => {
+            const hint = a.closest('[data-result]')?.querySelector<HTMLElement>('[data-hint]');
+            if (hint) hint.textContent = `已複製「${code}」，加好友後貼上傳給我就好。`;
+          },
+          () => {},
+        );
+      }),
+    );
+
+    root.querySelectorAll<HTMLButtonElement>('[data-share]').forEach((btn) =>
+      btn.addEventListener('click', async () => {
+        const data = {
+          title: document.title,
+          text: '1 分鐘小測驗：你在財富金字塔的哪一層？',
+          url: location.href.split('#')[0],
+        };
+        try {
+          if (navigator.share) {
+            await navigator.share(data);
+          } else {
+            await navigator.clipboard.writeText(data.url);
+            btn.textContent = '連結已複製，貼給朋友吧';
+          }
+        } catch {}
+      }),
+    );
+
+    highlight(config.layers[current]);
+  }
+</script>
