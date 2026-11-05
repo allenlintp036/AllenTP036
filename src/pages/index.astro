@@ -1,5 +1,6 @@
 ---
 import MiniPyramid from '../components/MiniPyramid.astro';
+import PhotoStack from '../components/PhotoStack.astro';
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
@@ -25,9 +26,7 @@ const question = (await getCollection('questions'))
 <Base>
   <div class="container">
     <section class="hero">
-      <div class="hero-photo">
-        <img src={url('/me.jpg')} alt={`${site.name}的照片`} width="1108" height="1477" fetchpriority="high" />
-      </div>
+      <PhotoStack />
       <div class="hero-text">
         <p class="eyebrow">{site.role}</p>
         <h1>無話不談，<br />無思不想</h1>

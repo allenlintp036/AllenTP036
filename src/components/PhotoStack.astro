@@ -1,0 +1,111 @@
+---
+// 一疊像便利貼一樣的照片：點一下或往左滑，最上面那張翻到最後面
+import { photos } from '../data/photos';
+import { url } from '../lib/url';
+
+// 每張照片歪的角度，看起來像隨手貼上去的
+const tilts = [-2, 3, -3.5, 2.5, -1.5];
+---
+
+<div class="photo-stack" data-stack>
+  <div class="stack-cards" data-cards>
+    {photos.map((p, i) => (
+      <figure
+        class="stack-card"
+        data-card
+        style={`--tilt: ${tilts[i % tilts.length]}deg; --pos: ${p.position ?? '50% 50%'}; --depth: ${i}; z-index: ${photos.length - i};`}
+        aria-hidden={i === 0 ? undefined : 'true'}
+        data-top={i === 0 ? '' : undefined}
+      >
+        <span class="tape" aria-hidden="true"></span>
+        <img
+          src={url(p.src)}
+          alt={p.alt}
+          width={p.width}
+          height={p.height}
+          loading={i === 0 ? 'eager' : 'lazy'}
+          fetchpriority={i === 0 ? 'high' : undefined}
+          draggable="false"
+        />
+        {p.caption && <figcaption>{p.caption}</figcaption>}
+      </figure>
+    ))}
+  </div>
+  {photos.length > 1 && (
+    <button type="button" class="stack-next" data-next>
+      <span class="stack-count" data-count>1 / {photos.length}</span>
+      點照片翻下一張
+    </button>
+  )}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-stack]').forEach((stack) => {
+    const cardsWrap = stack.querySelector<HTMLElement>('[data-cards]');
+    const cards = [...stack.querySelectorAll<HTMLElement>('[data-card]')];
+    const count = stack.querySelector<HTMLElement>('[data-count]');
+    if (!cardsWrap || cards.length < 2) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let order = cards.map((_, i) => i); // order[0] 是最上面那張
+    let busy = false;
+
+    const layout = () => {
+      order.forEach((cardIndex, depth) => {
+        const card = cards[cardIndex];
+        card.style.setProperty('--depth', String(depth));
+        card.style.zIndex = String(cards.length - depth);
+        card.toggleAttribute('data-top', depth === 0);
+        if (depth === 0) card.removeAttribute('aria-hidden');
+        else card.setAttribute('aria-hidden', 'true');
+      });
+      if (count) count.textContent = `${order[0] + 1} / ${cards.length}`;
+    };
+
+    const flip = (direction: 1 | -1) => {
+      if (busy) return;
+      if (direction === -1) {
+        // 往右滑：把最後一張拿回最上面
+        order = [order[order.length - 1], ...order.slice(0, -1)];
+        layout();
+        return;
+      }
+      const top = cards[order[0]];
+      const finish = () => {
+        top.classList.remove('is-leaving');
+        order = [...order.slice(1), order[0]];
+        layout();
+        busy = false;
+      };
+      if (reduceMotion) return finish();
+      busy = true;
+      top.classList.add('is-leaving');
+      window.setTimeout(finish, 320);
+    };
+
+    // 點一下翻下一張；手指往左滑也是下一張，往右滑回上一張
+    let startX = 0;
+    let startY = 0;
+    let swiped = false;
+    cardsWrap.addEventListener('pointerdown', (e) => {
+      startX = e.clientX;
+      startY = e.clientY;
+      swiped = false;
+    });
+    cardsWrap.addEventListener('pointerup', (e) => {
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        swiped = true;
+        flip(dx < 0 ? 1 : -1);
+      }
+    });
+    cardsWrap.addEventListener('click', () => {
+      if (!swiped) flip(1);
+      swiped = false;
+    });
+    stack.querySelector('[data-next]')?.addEventListener('click', () => flip(1));
+
+    layout();
+  });
+</script>
