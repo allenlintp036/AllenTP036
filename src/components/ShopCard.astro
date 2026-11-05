@@ -1,0 +1,37 @@
+---
+import { mapLink, type Shop } from '../data/shops';
+import { url } from '../lib/url';
+
+interface Props {
+  shop: Shop;
+}
+const { shop } = Astro.props;
+---
+
+<article class="shop-card" data-cat={shop.category}>
+  {shop.photo && <img class="shop-photo" src={url(`/shops/${shop.photo}`)} alt={shop.name} loading="lazy" />}
+  <div class="shop-body">
+    <p class="shop-meta">
+      <span class="shop-cat">{shop.category}</span>
+      <span class="shop-spot">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+        {shop.city}・{shop.spot}
+      </span>
+    </p>
+    <h3 class="shop-name">{shop.name}</h3>
+    <p class="shop-must">
+      <span class="shop-must-label">必點</span>
+      {shop.mustOrder.map((m) => <span class="shop-must-item">{m}</span>)}
+    </p>
+    {shop.note && (
+      <p class="shop-note">
+        <span class="shop-note-who">立純說</span>
+        {shop.note}
+      </p>
+    )}
+    <a class="shop-map" href={mapLink(shop)} target="_blank" rel="noopener">
+      看地圖
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"></path></svg>
+    </a>
+  </div>
+</article>

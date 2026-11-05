@@ -13,12 +13,15 @@ import { site } from '../site';
 import { url } from '../lib/url';
 import { getPosts, getUpcoming, getVideos } from '../lib/posts';
 import Upcoming from '../components/Upcoming.astro';
+import ShopCard from '../components/ShopCard.astro';
+import { publishedShops, shopsIntro } from '../data/shops';
 
 const insurance = (await getPosts('insurance')).slice(0, 3);
 const thoughts = (await getPosts('thoughts')).slice(0, 3);
 const upcomingInsurance = insurance.length ? [] : (await getUpcoming('insurance')).slice(0, 3);
 const upcomingThoughts = thoughts.length ? [] : (await getUpcoming('thoughts')).slice(0, 3);
 const videos = (await getVideos()).slice(0, 3);
+const homeShops = publishedShops().slice(0, 3);
 const question = (await getCollection('questions'))
   .filter((q) => !q.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())[0];
@@ -99,6 +102,22 @@ const question = (await getCollection('questions'))
         )}
       </section>
     </div>
+
+    {homeShops.length > 0 && (
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <h2>推薦店家</h2>
+            <p>{shopsIntro}</p>
+          </div>
+          <a class="more-link" href={url('/shops/')}>看全部 →</a>
+        </div>
+        <div class="card-row shop-row">
+          {homeShops.map((s) => <ShopCard shop={s} />)}
+        </div>
+        <p class="swipe-hint">← 左右滑動看更多</p>
+      </section>
+    )}
 
     <AboutBand />
   </div>

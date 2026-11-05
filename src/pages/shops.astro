@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import ShopCard from '../components/ShopCard.astro';
+import { publishedShops, shopsIntro } from '../data/shops';
+import { site } from '../site';
+
+const list = publishedShops();
+const cats = [...new Set(list.map((s) => s.category))];
+---
+
+<Base title="推薦店家" description={shopsIntro}>
+  <div class="container">
+    <header class="page-head">
+      <h1>推薦店家</h1>
+      <p>{shopsIntro}</p>
+    </header>
+
+    {cats.length > 1 && (
+      <div class="shop-filters" role="group" aria-label="依分類篩選">
+        <button type="button" class="shop-chip" data-filter="all" aria-pressed="true">全部 <span>{list.length}</span></button>
+        {cats.map((c) => (
+          <button type="button" class="shop-chip" data-filter={c} aria-pressed="false">
+            {c} <span>{list.filter((s) => s.category === c).length}</span>
+          </button>
+        ))}
+      </div>
+    )}
+
+    <div class="shop-grid">
+      {list.map((s) => <ShopCard shop={s} />)}
+    </div>
+
+    <section class="shop-ask">
+      <p class="shop-ask-title">你也有私藏的基隆店家嗎？</p>
+      <p>LINE 告訴我，我去吃吃看，好吃就放上來。</p>
+      <a class="btn btn-accent" href={site.lineUrl} target="_blank" rel="noopener">LINE 推薦給我</a>
+    </section>
+  </div>
+</Base>
+
+<script>
+  const chips = document.querySelectorAll<HTMLButtonElement>('.shop-chip');
+  const cards = document.querySelectorAll<HTMLElement>('.shop-grid .shop-card');
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const f = chip.dataset.filter;
+      chips.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      cards.forEach((card) => {
+        card.hidden = f !== 'all' && card.dataset.cat !== f;
+      });
+    });
+  });
+</script>

@@ -1978,3 +1978,195 @@ body {
     grid-template-columns: repeat(12, minmax(0, 1fr));
   }
 }
+
+/* ---------- 推薦店家 ---------- */
+.shop-filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 calc(var(--gutter) * -1) 20px;
+  padding: 0 var(--gutter) 4px;
+}
+.shop-chip {
+  flex: none;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+.shop-chip span {
+  margin-left: 2px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.shop-chip[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+.shop-chip[aria-pressed='true'] span {
+  color: inherit;
+  opacity: 0.8;
+}
+.shop-grid {
+  display: grid;
+  gap: 14px;
+}
+.shop-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+}
+.shop-card[hidden] {
+  display: none;
+}
+.shop-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+.shop-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 22px 18px;
+}
+.shop-meta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.shop-cat {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--warm) 14%, transparent);
+  color: var(--warm);
+  font-weight: 500;
+}
+.shop-spot {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.shop-name {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.4;
+}
+.shop-must {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+.shop-must-label {
+  margin-right: 2px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.shop-must-item {
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: var(--soft);
+  color: var(--accent-ink);
+  font-weight: 500;
+}
+.shop-note {
+  margin: 4px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--gold) 16%, var(--surface));
+  font-family: 'LXGW WenKai TC', var(--serif);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+.shop-note-who {
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--warm);
+}
+.shop-map {
+  margin-top: auto;
+  padding-top: 6px;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.shop-ask {
+  margin-top: 40px;
+  padding: 28px 24px;
+  border-radius: var(--radius);
+  background: var(--soft);
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+}
+.shop-ask p {
+  margin: 0;
+}
+.shop-ask-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+}
+@media (min-width: 640px) {
+  .shop-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 960px) {
+  .shop-filters {
+    flex-wrap: wrap;
+    overflow: visible;
+    margin: 0 0 28px;
+    padding: 0;
+  }
+  .shop-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .shop-ask {
+    margin-top: 64px;
+    padding: 48px;
+  }
+}
+
+/* 選單項目變多：窄一點的電腦螢幕縮小間距，避免換行 */
+@media (min-width: 960px) {
+  .brand,
+  .nav-desktop a {
+    white-space: nowrap;
+  }
+}
+@media (min-width: 960px) and (max-width: 1199px) {
+  .nav-desktop {
+    gap: 20px;
+  }
+  .nav-desktop a:not(.btn) {
+    font-size: 15px;
+  }
+}
