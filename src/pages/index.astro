@@ -1,6 +1,7 @@
 ---
 import MiniPyramid from '../components/MiniPyramid.astro';
 import PhotoStack from '../components/PhotoStack.astro';
+import EconLight from '../components/EconLight.astro';
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
@@ -54,6 +55,8 @@ const question = (await getCollection('questions'))
       </div>
       <MiniPyramid active="risk" tone="solid" class="teaser-pyramid" />
     </a>
+
+    <EconLight />
 
     <section class="section">
       <div class="section-head">

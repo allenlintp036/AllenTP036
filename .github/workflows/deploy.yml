@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # 國發會大約每月 27 號公布景氣燈號，月底到月初每天早上 10 點（台灣時間）重新抓一次
+  schedule:
+    - cron: '0 2 1-3,25-31 * *'
 
 permissions:
   contents: read
@@ -24,6 +27,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: 更新國發會景氣燈號
+        run: python3 scripts/update_ndc.py || echo "::warning::景氣燈號沒抓到，沿用上次的資料"
       - run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
