@@ -1,13 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
+import MiniPyramid from '../../components/MiniPyramid.astro';
 import { site } from '../../site';
 import { url } from '../../lib/url';
 import { layers } from '../../data/wealth';
 import { questions, results, thresholds, statusLabel } from '../../data/quiz';
 
 const layerTitle: Record<string, string> = Object.fromEntries(layers.map((l) => [l.id, l.title]));
-// 金字塔由上往下畫
-const drawOrder = [...layers].reverse();
 const config = JSON.stringify({
   layers: questions.map((q) => q.layer),
   thresholds,
@@ -25,14 +24,7 @@ const config = JSON.stringify({
 
     <section class="quiz" data-quiz data-state="asking" data-config={config}>
       <aside class="quiz-side">
-        <div class="quiz-pyramid">
-          {drawOrder.map((l) => (
-            <div class="qp-layer" data-qp={l.id}>
-              <span class="qp-title">{l.title}</span>
-              <span class="qp-status" data-qp-status></span>
-            </div>
-          ))}
-        </div>
+        <MiniPyramid withStatus class="quiz-pyramid" />
         <p class="quiz-side-note">每一題都對應金字塔的一層，由下往上看。</p>
       </aside>
 
