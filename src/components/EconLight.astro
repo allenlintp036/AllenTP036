@@ -1,0 +1,66 @@
+---
+// 國發會景氣對策信號（景氣燈號）。資料在 src/data/ndc-signal.json，部署時自動更新。
+import data from '../data/ndc-signal.json';
+import { ndcNote } from '../data/ndc-note';
+import { site } from '../site';
+
+type Light = '紅' | '黃紅' | '綠' | '黃藍' | '藍';
+const info: Record<Light, { name: string; mood: string; range: string }> = {
+  紅: { name: '紅燈', mood: '景氣熱絡', range: '38–45' },
+  黃紅: { name: '黃紅燈', mood: '景氣活絡', range: '32–37' },
+  綠: { name: '綠燈', mood: '景氣穩定', range: '23–31' },
+  黃藍: { name: '黃藍燈', mood: '景氣欠佳', range: '17–22' },
+  藍: { name: '藍燈', mood: '景氣低迷', range: '9–16' },
+};
+const cls: Record<Light, string> = { 紅: 'red', 黃紅: 'yellow-red', 綠: 'green', 黃藍: 'yellow-blue', 藍: 'blue' };
+
+const history = data.history as { month: string; score: number; light: Light }[];
+const latest = history[history.length - 1];
+const [y, m] = latest.month.split('-').map(Number);
+const label = `${y} 年 ${m} 月`;
+const note = ndcNote.month === latest.month && ndcNote.text ? ndcNote.text : '';
+const scale: Light[] = ['藍', '黃藍', '綠', '黃紅', '紅'];
+---
+
+<section class="econ" aria-labelledby="econ-title">
+  <div class="econ-main">
+    <p class="eyebrow" id="econ-title">國發會景氣燈號・{label}</p>
+    <div class="econ-now">
+      <span class:list={['econ-dot', 'econ-dot-lg', cls[latest.light]]} aria-hidden="true"></span>
+      <div>
+        <p class="econ-light">{info[latest.light].name}<span>{latest.score} 分</span></p>
+        <p class="econ-mood">{info[latest.light].mood}</p>
+      </div>
+    </div>
+    {note && (
+      <div class="econ-note">
+        <span class="label">{site.name}怎麼看</span>
+        <p>{note}</p>
+      </div>
+    )}
+  </div>
+
+  <div class="econ-side">
+    <p class="label">最近 12 個月</p>
+    <ol class="econ-history">
+      {history.map((h) => (
+        <li title={`${h.month}：${info[h.light].name} ${h.score} 分`}>
+          <span class:list={['econ-dot', cls[h.light]]} aria-hidden="true"></span>
+          <span class="m">{Number(h.month.slice(5))}月</span>
+          <span class="sr-only">{`${h.month} ${info[h.light].name} ${h.score} 分`}</span>
+        </li>
+      ))}
+    </ol>
+    <ul class="econ-scale" aria-label="燈號代表的意思">
+      {scale.map((l) => (
+        <li>
+          <span class:list={['econ-dot', cls[l]]} aria-hidden="true"></span>
+          {info[l].mood.replace('景氣', '')}
+        </li>
+      ))}
+    </ul>
+    <p class="econ-source">
+      資料來源：<a href={data.source} target="_blank" rel="noopener">國家發展委員會</a>，每月底更新。燈號反映整體景氣，不是個別的投資建議。
+    </p>
+  </div>
+</section>
