@@ -169,6 +169,21 @@ h3 {
 .brand:hover {
   color: var(--ink);
 }
+.brand {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+.brand-sep,
+.brand-tag {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.brand-sep {
+  margin: 0 0.4em;
+  color: var(--muted);
+}
 
 .nav-desktop {
   display: none;
@@ -675,6 +690,10 @@ body {
   }
   .brand {
     font-size: 24px;
+  }
+  .brand-sep,
+  .brand-tag {
+    font-size: 17px;
   }
   .nav-desktop {
     display: flex;
@@ -1976,5 +1995,24 @@ body {
   }
   .econ-history {
     grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+}
+
+/* 左上角名字變長：窄一點的電腦螢幕縮小選單間距，避免擠在一起 */
+@media (min-width: 960px) {
+  .nav-desktop a {
+    white-space: nowrap;
+  }
+}
+@media (min-width: 960px) and (max-width: 1199px) {
+  .nav-desktop {
+    gap: 20px;
+  }
+  .nav-desktop a:not(.btn) {
+    font-size: 15px;
+  }
+  .brand-sep,
+  .brand-tag {
+    font-size: 15px;
   }
 }
