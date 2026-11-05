@@ -5,7 +5,7 @@ export type Post = CollectionEntry<'insurance'> | CollectionEntry<'thoughts'>;
 
 export const sectionLabel: Record<Section, string> = {
   insurance: '就事論事談保險',
-  thoughts: '我在想的事',
+  thoughts: '時事觀察評論',
 };
 
 export async function getPosts(section: Section): Promise<Post[]> {

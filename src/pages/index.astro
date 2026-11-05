@@ -74,17 +74,17 @@ const question = (await getCollection('questions'))
           {insurance.length > 1 && <p class="swipe-hint">← 左右滑動看更多</p>}
         </>
       ) : (
-        <Upcoming posts={upcomingInsurance} />
+        <Upcoming posts={upcomingInsurance} section="insurance" />
       )}
     </section>
 
     <div class="two-col">
       <section class="section">
         <div class="section-head">
-          <h2>我在想的事</h2>
+          <h2>時事觀察評論</h2>
           <a class="more-link" href={url('/thoughts/')}>看全部 →</a>
         </div>
-        {thoughts.length > 0 ? thoughts.map((post) => <PostListItem post={post} />) : <Upcoming posts={upcomingThoughts} />}
+        {thoughts.length > 0 ? thoughts.map((post) => <PostListItem post={post} />) : <Upcoming posts={upcomingThoughts} section="thoughts" />}
       </section>
 
       <section class="section">
