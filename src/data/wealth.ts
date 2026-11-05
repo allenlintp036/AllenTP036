@@ -66,3 +66,10 @@ export const layers: WealthLayer[] = [
 
 export const activeIncome = ['薪資', '執行業務所得'];
 export const passiveIncome = ['利息（本金）', '生存金（儲蓄險）', '債息（債券）', '盈利（股票）', '租賃（房地產）'];
+
+// 金字塔每一層的位置和形狀（百分比），財富管理頁、小測驗、首頁共用
+export const pyramidShape: Record<string, { top: number; height: number; clip: string }> = {
+  legacy: { top: 0, height: 42, clip: 'polygon(50% 0, 50% 0, 71% 100%, 29% 100%)' },
+  invest: { top: 43.5, height: 27.5, clip: 'polygon(28.25% 0, 71.75% 0, 85.5% 100%, 14.5% 100%)' },
+  risk: { top: 72.5, height: 27.5, clip: 'polygon(13.75% 0, 86.25% 0, 100% 100%, 0 100%)' },
+};

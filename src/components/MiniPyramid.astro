@@ -1,0 +1,35 @@
+---
+// 不能點的小金字塔：小測驗旁邊、首頁入口用。形狀跟財富管理頁的大金字塔一樣。
+import { layers, pyramidShape } from '../data/wealth';
+
+interface Props {
+  /** 要亮起來的那一層 */
+  active?: string;
+  /** 每層底下留一個狀態標籤（穩／有缺口／待補），由頁面的程式填入 */
+  withStatus?: boolean;
+  /** dim：沒亮的層淡淡的；solid：沒亮的層也是深色 */
+  tone?: 'dim' | 'solid';
+  class?: string;
+}
+
+const { active, withStatus = false, tone = 'dim', class: className } = Astro.props;
+// 由上往下畫
+const drawOrder = [...layers].reverse();
+---
+
+<div class:list={['mini-pyr', `mini-pyr--${tone}`, className]} aria-hidden="true">
+  {drawOrder.map((l) => {
+    const s = pyramidShape[l.id];
+    return (
+      <div
+        class:list={['mp-layer', { 'is-current': l.id === active }]}
+        data-qp={l.id}
+        data-layer={l.id}
+        style={`top: ${s.top}%; height: ${s.height}%; clip-path: ${s.clip};`}
+      >
+        <span class="mp-title">{l.title}</span>
+        {withStatus && <span class="qp-status" data-qp-status />}
+      </div>
+    );
+  })}
+</div>

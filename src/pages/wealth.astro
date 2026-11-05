@@ -2,15 +2,11 @@
 import Base from '../layouts/Base.astro';
 import { site } from '../site';
 import { url } from '../lib/url';
-import { layers, activeIncome, passiveIncome } from '../data/wealth';
+import { layers, activeIncome, passiveIncome, pyramidShape } from '../data/wealth';
 
 // 金字塔由上往下畫，但閱讀順序是由下往上
 const drawOrder = [...layers].reverse();
-const shape: Record<string, { top: number; height: number; clip: string }> = {
-  legacy: { top: 0, height: 42, clip: 'polygon(50% 0, 50% 0, 71% 100%, 29% 100%)' },
-  invest: { top: 43.5, height: 27.5, clip: 'polygon(28.25% 0, 71.75% 0, 85.5% 100%, 14.5% 100%)' },
-  risk: { top: 72.5, height: 27.5, clip: 'polygon(13.75% 0, 86.25% 0, 100% 100%, 0 100%)' },
-};
+const shape = pyramidShape;
 const first = layers[0];
 ---
 

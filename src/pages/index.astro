@@ -1,4 +1,5 @@
 ---
+import MiniPyramid from '../components/MiniPyramid.astro';
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
@@ -49,11 +50,7 @@ const question = (await getCollection('questions')).sort((a, b) => b.data.date.g
         <p>財富管理就像蓋房子，要從最底層開始。回答 6 個問題，看看你的地基穩不穩、下一步該先補什麼。</p>
         <span class="more-link">開始測驗 →</span>
       </div>
-      <div class="mini-pyramid" aria-hidden="true">
-        <span>財富傳承</span>
-        <span>投資／退休管理</span>
-        <span>風險管理</span>
-      </div>
+      <MiniPyramid active="risk" tone="solid" class="teaser-pyramid" />
     </a>
 
     <section class="section">
